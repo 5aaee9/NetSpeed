@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -30,5 +31,5 @@ func main() {
 		return c.JSON(http.StatusOK, data)
 	})
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", ParseEnvUint("PORT", 8080))))
 }

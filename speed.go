@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-	"strconv"
 	"sync"
 	"time"
 
@@ -18,17 +16,7 @@ type InterfaceData struct {
 	RxSpeed uint64 `json:"rx_speed"`
 }
 
-var measureInterval uint64 = 5
-
-func init() {
-	interval := os.Getenv("MEASURE_INTERVAL")
-	if len(interval) > 0 {
-		if data, err := strconv.ParseUint(interval, 10, 64); err == nil && data > 0 {
-			measureInterval = data
-			logrus.Infof("set measure interval: %d", data)
-		}
-	}
-}
+var measureInterval uint64 = ParseEnvUint("MEASURE_INTERVAL", 5)
 
 var lock sync.RWMutex
 
