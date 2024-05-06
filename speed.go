@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -16,14 +18,24 @@ type InterfaceData struct {
 	RxSpeed uint64 `json:"rx_speed"`
 }
 
-const measureInterval = 5
+var measureInterval uint64 = 5
+
+func init() {
+	interval := os.Getenv("MEASURE_INTERVAL")
+	if len(interval) > 0 {
+		if data, err := strconv.ParseUint(interval, 10, 64); err == nil && data > 0 {
+			measureInterval = data
+			logrus.Infof("set measure interval: %d", data)
+		}
+	}
+}
 
 var lock sync.RWMutex
 
 var interfacesMap = map[string]InterfaceData{}
 
 func StartUpdateTask() {
-	ticker := time.NewTicker(time.Second * measureInterval)
+	ticker := time.NewTicker(time.Second * time.Duration(measureInterval))
 
 	for {
 		<-ticker.C
